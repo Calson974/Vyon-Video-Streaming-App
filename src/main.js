@@ -1,4 +1,5 @@
 import './style.css'
+import homePageContent from '../Pages/Home.html?raw'
 import { 
   createIcons,
   Menu,
@@ -13,11 +14,8 @@ import {
 // Load and render Home page
 async function loadHomePage() {
   try {
-    const response = await fetch('./Pages/Home.html')
-    const homeContent = await response.text()
-    
     const parser = new DOMParser()
-    const doc = parser.parseFromString(homeContent, 'text/html')
+    const doc = parser.parseFromString(homePageContent, 'text/html')
     
     const bodyContent = doc.body.innerHTML
     
