@@ -1,3 +1,7 @@
+import { auth } from "../../firebase/firebase-config";
+import { createUserWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth';
+import { showModal } from "./modal";
+
 const getUsers = () => {
   const users = localStorage.getItem("users");
   return users ? JSON.parse(users) : [];
@@ -9,59 +13,17 @@ const saveUser = (user) => {
   localStorage.setItem("users", JSON.stringify(users));
 };
 
-const loginTab = document.getElementById("loginTab");
-const signupTab = document.getElementById("signupTab");
-
 const loginForm = document.getElementById("loginForm");
 const signupForm = document.getElementById("signupForm");
 
-loginTab.addEventListener("click", () => {
-  signupForm.classList.add("hidden");
-  loginForm.classList.remove("hidden");
-  loginForm.classList.add("animate-slideInRight");
-
-  loginTab.classList.add("border-b-2", "border-pink-500", "text-white");
-  signupTab.classList.remove("border-pink-500", "text-white");
-  signupTab.classList.add("text-gray-300");
-});
-
-signupTab.addEventListener("click", () => {
-  loginForm.classList.add("hidden");
-  signupForm.classList.remove("hidden");
-  signupForm.classList.add("animate-slideInLeft");
-
-  signupTab.classList.add("border-b-2", "border-pink-500", "text-white");
-  loginTab.classList.remove("border-pink-500", "text-white");
-  loginTab.classList.add("text-gray-300");
-});
-
-// ----- MODAL UTILS -----
-const modal = document.getElementById("modalPopup");
-const modalTitle = document.getElementById("modalTitle");
-const modalMessage = document.getElementById("modalMessage");
-const modalClose = document.getElementById("modalClose");
-
-const showModal = (title, message, callback) => {
-  modalTitle.textContent = title;
-  modalMessage.textContent = message;
-  modal.classList.remove("hidden");
-
-  const handler = () => {
-    modal.classList.add("hidden");
-    modalClose.removeEventListener("click", handler);
-    if (callback) callback();
-  };
-
-  modalClose.addEventListener("click", handler);
-};
 
 // ----- SIGNUP LOGIC -----
-signupForm.addEventListener("submit", (e) => {
+signupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = signupForm.querySelector("input[type=text]").value.trim();
-  const email = signupForm.querySelector("input[type=email]").value.trim();
-  const password = signupForm.querySelector("input[type=password]").value.trim();
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
   if (!name || !email || !password) {
     showModal("Oops!", "Please fill in all fields.");
@@ -79,34 +41,56 @@ signupForm.addEventListener("submit", (e) => {
     return;
   }
 
-  // Save new user
-  saveUser({ name, email, password });
-  showModal("Signup Successful", "Your account has been created! Redirecting to homepage...", () => {
+   try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+      await updateProfile(userCredential.user, {
+        displayName: name,
+      });
+
+      // Save new user in local storage
+      saveUser({ name, email, password });
+
+      showModal("Signup Successful", "Your account has been created! Redirecting to homepage...", () => {
     window.location.href = "/index.html"; // <-- your homepage
   });
+
+   } catch (error) {
+      showModal(`Error: ${error.message}`);
+   }
 });
 
+
 // ----- LOGIN LOGIC -----
-loginForm.addEventListener("submit", (e) => {
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = loginForm.querySelector("input[type=email]").value.trim();
-  const password = loginForm.querySelector("input[type=password]").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
   if (!email || !password) {
     showModal("Oops!", "Please fill in all fields.");
     return;
   }
 
-  const users = getUsers();
-  const user = users.find((u) => u.email === email && u.password === password);
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
 
-  if (!user) {
-    showModal("Login Failed", "Invalid email or password!");
-    return;
-  }
-
-  showModal("Welcome Back", `Hi ${user.name}! Redirecting to homepage...`, () => {
+     showModal("Welcome Back", `Hi ${user.name}! Redirecting to homepage...`, () => {
     window.location.href = "/index.html"; // <-- your homepage
   });
+
+  } catch (err) {
+    showModal(err.message);
+  }
+
 });
+
+
+// ----- LOGOUT LOGIC -----
+// export const logout = async () => {
+//   await signOut(auth);
+//   localStorage.removeItem("currentUser");
+//   window.location.href = "Pages/auth/auth.html";
+// }
+
