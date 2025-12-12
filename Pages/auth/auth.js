@@ -1,5 +1,5 @@
 import { auth } from "../../firebase/firebase-config";
-import { createUserWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from 'firebase/auth';
 import { showModal } from "./modal";
 
 const getUsers = () => {
@@ -65,8 +65,8 @@ signupForm.addEventListener("submit", async (e) => {
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+  const email = loginForm.querySelector("input[type=email]").value.trim();
+  const password = loginForm.querySelector("input[type=password]").value.trim();
 
   if (!email || !password) {
     showModal("Oops!", "Please fill in all fields.");
@@ -74,9 +74,11 @@ loginForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-     showModal("Welcome Back", `Hi ${user.name}! Redirecting to homepage...`, () => {
+    const user = userCredential.user;
+    
+    showModal("Welcome Back", `Hi ${user.displayName}! Redirecting to homepage...`, () => {
     window.location.href = "/index.html"; // <-- your homepage
   });
 
