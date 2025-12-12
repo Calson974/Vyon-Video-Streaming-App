@@ -12,7 +12,7 @@ export function checkAuthState() {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       // User is signed in
-      console.log('User is signed in:', user.displayName);
+      
       
       // Hide auth buttons and show user menu
       if (signUpBtn) signUpBtn.style.display = 'none';
@@ -22,7 +22,7 @@ export function checkAuthState() {
       showUserMenuButton(user);
     } else {
       // User is signed out
-      console.log('User is signed out');
+      
       
       // Show auth buttons and hide user menu
       if (signUpBtn) signUpBtn.style.display = 'block';

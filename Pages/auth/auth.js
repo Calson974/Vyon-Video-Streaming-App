@@ -49,48 +49,53 @@ signupForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value.trim();
 
   if (!name || !email || !password) {
-    showModal("Oops!", "Please fill in all fields.");
-    return;
+    return showModal("Oops!", "Please fill in all fields.");
   }
 
-  const users = await getUsers();
-  const existingUser = Object.values(users).find(u => u.email === email);
+  // Show loading
+  showModal("Creating Account...", "Please wait while we set things up.");
 
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-  if (existingUser) {
-    showModal("Email Exists", "This email is already registered. Please log in instead.", () => {
-      loginTab.click();
-      loginForm.querySelector("input[type=email]").value = email;
+    await updateProfile(userCredential.user, {
+      displayName: name,
     });
-    return;
-  }
 
-   try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-      await updateProfile(userCredential.user, {
-        displayName: name,
-      });
-
-      // Save users in real time database
-      await set(ref(db, "users/" + userCredential.user.uid), {
+    await set(ref(db, "users/" + userCredential.user.uid), {
       uid: userCredential.user.uid,
-      name: name,
-      email: email,
-      createdAt: Date.now()
+      name,
+      email,
+      createdAt: Date.now(),
     });
 
-      // Save new user in local storage
-      saveUser({ name, email });
+    showModal(
+      "Signup Successful",
+      "Your account has been created! Redirecting...",
+      () => (window.location.href = "/index.html")
+    );
 
-      showModal("Signup Successful", "Your account has been created! Redirecting to homepage...", () => {
-      window.location.href = "/index.html"; // <-- your homepage
-  });
+  } catch (error) {
+    let msg = "Something went wrong.";
 
-   } catch (error) {
-      showModal(`Error: ${error.message}`);
-   }
+    switch (error.code) {
+      case "auth/email-already-in-use":
+        msg = "This email is already registered.";
+        break;
+      case "auth/weak-password":
+        msg = "Password must be at least 6 characters.";
+        break;
+      case "auth/network-request-failed":
+        msg = "Network error. Please check your connection.";
+        break;
+      default:
+        msg = error.message;
+    }
+
+    showModal("Signup Failed", msg);
+  }
 });
+
 
 
 // ----- LOGIN LOGIC -----
@@ -101,28 +106,44 @@ loginForm.addEventListener("submit", async (e) => {
   const password = loginForm.querySelector("input[type=password]").value.trim();
 
   if (!email || !password) {
-    showModal("Oops!", "Please fill in all fields.");
-    return;
+    return showModal("Oops!", "Please fill in all fields.");
   }
+
+  // Show loading modal
+  showModal("Signing In...", "Verifying your credentials...");
 
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
-    const user = userCredential.user;
-
-    // Update user in Realtime DB
     await update(ref(db, "users/" + userCredential.user.uid), {
-      lastLogin: Date.now()
+      lastLogin: Date.now(),
     });
-    
-    showModal("Welcome Back", `Hi ${user.displayName}! Redirecting to homepage...`, () => {
-    window.location.href = "/index.html"; // <-- your homepage
-  });
+
+    showModal(
+      "Welcome Back!",
+      `Hi ${userCredential.user.displayName}! Redirecting...`,
+      () => (window.location.href = "/index.html")
+    );
 
   } catch (err) {
-    showModal(err.message);
-  }
+    let msg = "Login failed.";
 
+    switch (err.code) {
+      case "auth/user-not-found":
+        msg = "No account found with this email.";
+        break;
+      case "auth/wrong-password":
+        msg = "Incorrect password.";
+        break;
+      case "auth/network-request-failed":
+        msg = "Network error. Check your internet connection.";
+        break;
+      default:
+        msg = err.message;
+    }
+
+    showModal("Login Error", msg);
+  }
 });
 
 
