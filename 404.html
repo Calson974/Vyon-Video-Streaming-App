@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Vyon</title>
+    <link rel="stylesheet" href="./src/style.css">
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.11/dist/dotlottie-wc.js" type="module"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-deep-obsidian text-crisp-white min-h-screen flex items-center justify-center">
+    <div class="text-center px-4">
+        <!-- 404 Animation/Graphic -->
+        <div class="mb-8">
+            <dotlottie-wc src="https://lottie.host/1804b2a1-1a1c-4185-9fa7-93bc74507dbf/wFgL0eiqyJ.lottie" style="width: 100vw;height: 100vh" autoplay loop></dotlottie-wc>
+        </div>
+        
+        <!-- Error Message -->
+        <h1 class="text-4xl font-bold mb-4">Video Not Found</h1>
+        <p class="text-xl text-cool-grey mb-8 max-w-md mx-auto">
+            Oops! The video you're looking for doesn't exist, has been removed, or is temporarily unavailable.
+        </p>
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button onclick="window.location.href='/'" class="px-6 py-3 bg-electric-mint text-deep-obsidian rounded-full font-medium hover:bg-opacity-90 transition-colors">
+                <i data-lucide="home" class="inline w-5 h-5 mr-2"></i>
+                Go Home
+            </button>
+            <button onclick="history.back()" class="px-6 py-3 border border-electric-mint text-electric-mint rounded-full font-medium hover:bg-electric-mint hover:text-deep-obsidian transition-colors">
+                <i data-lucide="arrow-left" class="inline w-5 h-5 mr-2"></i>
+                Go Back
+            </button>
+        </div>
+        
+        <!-- Additional Options -->
+        <div class="mt-12 text-sm text-cool-grey">
+            <p class="mb-4">Looking forzial content?</ baseline?</ptod>
+           倾
+                <a href="/" class="text-electric-mint hover:underline">Browse trending videos</a>
+            </p>
+            <p>
+                or 
+                <a href="/" class="text-electric-mint hover:underline">search for something else</a>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons({
+            icons: {
+                home: lucide.Home,
+                arrowLeft: lucide.ArrowLeft
+            }
+        });
+    </script>
+</body>
+</html>

@@ -4,6 +4,21 @@ import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPasswo
 import { showModal } from "./modal";
 import { get, ref, set, update } from "firebase/database";
 
+// Handle URL parameters for auto-selecting login/signup tab
+const urlParams = new URLSearchParams(window.location.search);
+const action = urlParams.get('action');
+
+// Auto-select tab based on URL parameter
+if (action === 'signup') {
+  setTimeout(() => {
+    document.getElementById('signupTab').click();
+  }, 100);
+} else if (action === 'login') {
+  setTimeout(() => {
+    document.getElementById('loginTab').click();
+  }, 100);
+}
+
 const getUsers = async () => {
   // const users = localStorage.getItem("users");
   // return users ? JSON.parse(users) : [];
