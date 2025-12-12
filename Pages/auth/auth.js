@@ -1,16 +1,24 @@
-import { auth } from "../../firebase/firebase-config";
-import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from 'firebase/auth';
+//@ts-nocheck
+import { auth, db } from "../../firebase/firebase-config";
+import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import { showModal } from "./modal";
+import { get, ref, set, update } from "firebase/database";
 
-const getUsers = () => {
-  const users = localStorage.getItem("users");
-  return users ? JSON.parse(users) : [];
+const getUsers = async () => {
+  // const users = localStorage.getItem("users");
+  // return users ? JSON.parse(users) : [];
+
+  const snapshot = await get(ref(db, "users"));
+  return snapshot.exists() ? snapshot.val() : {};
+
 };
 
-const saveUser = (user) => {
-  const users = getUsers();
-  users.push(user);
-  localStorage.setItem("users", JSON.stringify(users));
+const saveUser = async (user) => {
+  // const users = getUsers();
+  // users.push(user);
+  // localStorage.setItem("users", JSON.stringify(users));
+
+  await set(ref(db, "users/" + user.uid), user);
 };
 
 const loginForm = document.getElementById("loginForm");
@@ -30,8 +38,9 @@ signupForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  const users = getUsers();
-  const existingUser = users.find((u) => u.email === email);
+  const users = await getUsers();
+  const existingUser = Object.values(users).find(u => u.email === email);
+
 
   if (existingUser) {
     showModal("Email Exists", "This email is already registered. Please log in instead.", () => {
@@ -48,11 +57,19 @@ signupForm.addEventListener("submit", async (e) => {
         displayName: name,
       });
 
+      // Save users in real time database
+      await set(ref(db, "users/" + userCredential.user.uid), {
+      uid: userCredential.user.uid,
+      name: name,
+      email: email,
+      createdAt: Date.now()
+    });
+
       // Save new user in local storage
-      saveUser({ name, email, password });
+      saveUser({ name, email });
 
       showModal("Signup Successful", "Your account has been created! Redirecting to homepage...", () => {
-    window.location.href = "/index.html"; // <-- your homepage
+      window.location.href = "/index.html"; // <-- your homepage
   });
 
    } catch (error) {
@@ -77,6 +94,11 @@ loginForm.addEventListener("submit", async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
     const user = userCredential.user;
+
+    // Update user in Realtime DB
+    await update(ref(db, "users/" + userCredential.user.uid), {
+      lastLogin: Date.now()
+    });
     
     showModal("Welcome Back", `Hi ${user.displayName}! Redirecting to homepage...`, () => {
     window.location.href = "/index.html"; // <-- your homepage
@@ -89,10 +111,22 @@ loginForm.addEventListener("submit", async (e) => {
 });
 
 
+
+// -- Fetching the current user to display logic ---
+export const getCurrentUser = (callback) => {
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return callback(null);
+
+    const snap = await get(ref(db, "users/" + user.uid));
+    callback(snap.exists() ? snap.val() : null);
+  });
+}
+
+
 // ----- LOGOUT LOGIC -----
-// export const logout = async () => {
-//   await signOut(auth);
-//   localStorage.removeItem("currentUser");
-//   window.location.href = "Pages/auth/auth.html";
-// }
+export const logout = async () => {
+  await signOut(auth);
+  localStorage.removeItem("currentUser");
+  window.location.href = "Pages/auth/auth.html";
+}
 
