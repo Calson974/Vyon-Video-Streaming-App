@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video - Streaming App</title>
+    <link rel="stylesheet" href="../../src/style.css">
+    <style>
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gradient-bg {
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #1e293b);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.5);
+        }
+        .input-glow:focus {
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+        }
+        /* Dropdown arrow rotation */
+        .dropdown-arrow.rotate {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+<div class="max-w-4xl mx-auto p-6 py-12">
+    <div class="mb-8 fade-in">
+        <h1 class="text-5xl font-bold mb-3 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent" id="pageTitle">Upload Video</h1>
+        <p class="text-slate-300 text-lg">Share your epic gaming moments with the world</p>
+    </div>
+
+    <div id="successMessage" class="hidden glass-effect border-green-400 text-green-300 px-6 py-4 rounded-xl mb-6 fade-in">
+        <div class="flex items-center gap-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="font-semibold">Video saved successfully!</span>
+        </div>
+    </div>
+
+    <form id="uploadForm" class="glass-effect rounded-2xl p-8 space-y-6 shadow-2xl fade-in">
+        <div class="space-y-2">
+            <label for="title" class="block text-sm font-semibold text-slate-200">Title *</label>
+            <input type="text" id="title" required
+                   class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all text-white placeholder-slate-400"
+                   placeholder="Enter an epic title for your video">
+        </div>
+
+        <div class="space-y-2">
+            <label for="description" class="block text-sm font-semibold text-slate-200">Description *</label>
+            <textarea id="description" required rows="4"
+                      class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all resize-none text-white placeholder-slate-400"
+                      placeholder="Describe your gameplay, strategies, and highlights..."></textarea>
+        </div>
+
+        <div class="space-y-2">
+            <label class="block text-sm font-semibold text-slate-200">Category *</label>
+            <div id="categoryDropdown"></div>
+        </div>
+
+        <div class="space-y-2">
+            <label for="thumbnailUrl" class="block text-sm font-semibold text-slate-200">Thumbnail URL *</label>
+            <input type="url" id="thumbnailUrl" required
+                   class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all text-white placeholder-slate-400"
+                   placeholder="https://example.com/thumbnail.jpg">
+            <p class="text-slate-400 text-xs mt-2 ml-1">Paste the URL of your video thumbnail</p>
+        </div>
+
+        <div class="space-y-2">
+            <label for="videoUrl" class="block text-sm font-semibold text-slate-200">Video URL *</label>
+            <input type="url" id="videoUrl" required
+                   class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all text-white placeholder-slate-400"
+                   placeholder="https://example.com/video.mp4">
+            <p class="text-slate-400 text-xs mt-2 ml-1">Paste the URL of your video file</p>
+        </div>
+
+        <div class="flex gap-4 pt-6">
+            <button type="submit"
+                    class="flex-1 btn-gradient text-white font-bold py-4 rounded-xl shadow-lg">
+                <span id="submitText" class="flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    Upload Video
+                </span>
+            </button>
+            <a href="manage.html"
+               class="flex-1 bg-slate-700 bg-opacity-50 hover:bg-opacity-70 text-white font-bold py-4 rounded-xl transition-all text-center flex items-center justify-center gap-2 border border-slate-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // CustomDropdown class goes here (paste your full class as provided)
+    // Custom Dropdown Component
+class CustomDropdown {
+    constructor(elementId, options = {}) {
+        this.elementId = elementId;
+        this.options = options.items || [];
+        this.placeholder = options.placeholder || 'Select an option';
+        this.selectedValue = options.defaultValue || '';
+        this.onChange = options.onChange || (() => {});
+        this.isOpen = false;
+        
+        this.init();
+    }
+
+    init() {
+        const container = document.getElementById(this.elementId);
+        if (!container) return;
+
+        container.innerHTML = this.render();
+        this.attachEventListeners();
+        
+        // Set initial value if provided
+        if (this.selectedValue) {
+            this.setValue(this.selectedValue);
+        }
+    }
+
+    render() {
+        const selectedOption = this.options.find(opt => opt.value === this.selectedValue);
+        const displayText = selectedOption ? selectedOption.label : this.placeholder;
+
+        return `
+            <div class="relative">
+                <button 
+                    type="button"
+                    class="dropdown-trigger w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 text-left focus:outline-none focus:border-pink-500 transition-all text-white flex items-center justify-between hover:bg-opacity-70"
+                    data-dropdown="${this.elementId}">
+                    <span class="${!this.selectedValue ? 'text-slate-400' : 'text-white'}">${displayText}</span>
+                    <svg class="w-5 h-5 transition-transform dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="dropdown-menu hidden absolute z-50 w-full mt-2 bg-slate-800 border border-slate-600 rounded-xl shadow-2xl overflow-hidden">
+                    <div class="max-h-60 overflow-y-auto">
+                        ${this.options.map(option => `
+                            <button 
+                                type="button"
+                                class="dropdown-option w-full text-left px-5 py-3 hover:bg-slate-700 transition-colors text-white ${this.selectedValue === option.value ? 'bg-slate-700 text-pink-400' : ''}"
+                                data-value="${option.value}">
+                                ${option.label}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    attachEventListeners() {
+        const container = document.getElementById(this.elementId);
+        const trigger = container.querySelector('.dropdown-trigger');
+        const menu = container.querySelector('.dropdown-menu');
+        const arrow = container.querySelector('.dropdown-arrow');
+        const options = container.querySelectorAll('.dropdown-option');
+
+        // Toggle dropdown
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggle();
+        });
+
+        // Select option
+        options.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const value = option.dataset.value;
+                this.setValue(value);
+                this.close();
+                this.onChange(value);
+            });
+        });
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            if (!container.contains(e.target)) {
+                this.close();
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isOpen) {
+                this.close();
+            }
+        });
+    }
+
+    toggle() {
+        if (this.isOpen) {
+            this.close();
+        } else {
+            this.open();
+        }
+    }
+
+    open() {
+        const container = document.getElementById(this.elementId);
+        const menu = container.querySelector('.dropdown-menu');
+        const arrow = container.querySelector('.dropdown-arrow');
+        
+        menu.classList.remove('hidden');
+        arrow.style.transform = 'rotate(180deg)';
+        this.isOpen = true;
+    }
+
+    close() {
+        const container = document.getElementById(this.elementId);
+        const menu = container.querySelector('.dropdown-menu');
+        const arrow = container.querySelector('.dropdown-arrow');
+        
+        menu.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+        this.isOpen = false;
+    }
+
+    setValue(value) {
+        this.selectedValue = value;
+        const container = document.getElementById(this.elementId);
+        const trigger = container.querySelector('.dropdown-trigger span');
+        const options = container.querySelectorAll('.dropdown-option');
+        
+        const selectedOption = this.options.find(opt => opt.value === value);
+        if (selectedOption) {
+            trigger.textContent = selectedOption.label;
+            trigger.classList.remove('text-slate-400');
+            trigger.classList.add('text-white');
+        }
+
+        // Update selected state
+        options.forEach(option => {
+            if (option.dataset.value === value) {
+                option.classList.add('bg-slate-700', 'text-pink-400');
+            } else {
+                option.classList.remove('bg-slate-700', 'text-pink-400');
+            }
+        });
+    }
+
+    getValue() {
+        return this.selectedValue;
+    }
+
+    reset() {
+        this.selectedValue = '';
+        const container = document.getElementById(this.elementId);
+        const trigger = container.querySelector('.dropdown-trigger span');
+        trigger.textContent = this.placeholder;
+        trigger.classList.add('text-slate-400');
+        trigger.classList.remove('text-white');
+    }
+}
+</script>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get('edit');
+    let videos = JSON.parse(localStorage.getItem('videos') || '[]');
+
+    // Initialize category dropdown
+    const categoryDropdown = new CustomDropdown('categoryDropdown', {
+        placeholder: 'Select a category',
+        items: [
+            { value: 'Valorant', label: 'Valorant' },
+            { value: 'YORU', label: 'YORU' },
+            { value: 'Battle Royale', label: 'Battle Royale' },
+            { value: 'FPS', label: 'FPS' },
+            { value: 'Strategy', label: 'Strategy' },
+            { value: 'Other', label: 'Other' }
+        ],
+        defaultValue: editId ? videos.find(v => v.id === editId)?.category : '',
+        onChange: (value) => {}
+    });
+
+    // Pre-fill form if editing
+    if (editId) {
+        document.getElementById('pageTitle').textContent = 'Edit Video';
+        const video = videos.find(v => v.id === editId);
+        if (video) {
+            document.getElementById('title').value = video.title;
+            document.getElementById('description').value = video.description;
+            document.getElementById('thumbnailUrl').value = video.thumbnailUrl;
+            document.getElementById('videoUrl').value = video.videoUrl;
+        }
+        document.getElementById('submitText').innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Update Video`;
+    }
+
+    // Form submission
+    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const videoData = {
+            id: editId || Date.now().toString(),
+            title: document.getElementById('title').value,
+            description: document.getElementById('description').value,
+            category: categoryDropdown.getValue(),
+            thumbnailUrl: document.getElementById('thumbnailUrl').value,
+            videoUrl: document.getElementById('videoUrl').value,
+            uploadDate: editId ? (videos.find(v => v.id === editId)?.uploadDate || new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0],
+            viewCount: editId ? (videos.find(v => v.id === editId)?.viewCount || 0) : 0
+        };
+
+        if (editId) {
+            videos = videos.map(v => v.id === editId ? videoData : v);
+        } else {
+            videos.push(videoData);
+        }
+
+        localStorage.setItem('videos', JSON.stringify(videos));
+
+        document.getElementById('successMessage').classList.remove('hidden');
+        setTimeout(() => window.location.href = 'manage.html', 1500);
+    });
+</script>
+</body>
+</html>
