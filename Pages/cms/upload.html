@@ -83,7 +83,7 @@
 
         <div class="space-y-2">
             <label for="thumbnailUrl" class="block text-sm font-semibold text-slate-200">Thumbnail URL *</label>
-            <input type="url" id="thumbnailUrl" required
+            <input type="file" id="thumbnailUrl" accept="image/*" required
                    class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all text-white placeholder-slate-400"
                    placeholder="https://example.com/thumbnail.jpg">
             <p class="text-slate-400 text-xs mt-2 ml-1">Paste the URL of your video thumbnail</p>
@@ -91,7 +91,7 @@
 
         <div class="space-y-2">
             <label for="videoUrl" class="block text-sm font-semibold text-slate-200">Video URL *</label>
-            <input type="url" id="videoUrl" required
+            <input type="file" id="videoUrl" accept="video/*" required
                    class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all text-white placeholder-slate-400"
                    placeholder="https://example.com/video.mp4">
             <p class="text-slate-400 text-xs mt-2 ml-1">Paste the URL of your video file</p>
@@ -118,8 +118,10 @@
             </a>
         </div>
     </form>
+    <p id="status"></p>
 </div>
 
+<script type="module" src="/Pages/cms/upload.js"></script>
 <script>
     // CustomDropdown class goes here (paste your full class as provided)
     // Custom Dropdown Component
@@ -319,31 +321,31 @@ class CustomDropdown {
     }
 
     // Form submission
-    document.getElementById('uploadForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+    // document.getElementById('uploadForm').addEventListener('submit', function (e) {
+    //     e.preventDefault();
 
-        const videoData = {
-            id: editId || Date.now().toString(),
-            title: document.getElementById('title').value,
-            description: document.getElementById('description').value,
-            category: categoryDropdown.getValue(),
-            thumbnailUrl: document.getElementById('thumbnailUrl').value,
-            videoUrl: document.getElementById('videoUrl').value,
-            uploadDate: editId ? (videos.find(v => v.id === editId)?.uploadDate || new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0],
-            viewCount: editId ? (videos.find(v => v.id === editId)?.viewCount || 0) : 0
-        };
+    //     const videoData = {
+    //         id: editId || Date.now().toString(),
+    //         title: document.getElementById('title').value,
+    //         description: document.getElementById('description').value,
+    //         category: categoryDropdown.getValue(),
+    //         thumbnailUrl: document.getElementById('thumbnailUrl').value,
+    //         videoUrl: document.getElementById('videoUrl').value,
+    //         uploadDate: editId ? (videos.find(v => v.id === editId)?.uploadDate || new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0],
+    //         viewCount: editId ? (videos.find(v => v.id === editId)?.viewCount || 0) : 0
+    //     };
 
-        if (editId) {
-            videos = videos.map(v => v.id === editId ? videoData : v);
-        } else {
-            videos.push(videoData);
-        }
+    //     if (editId) {
+    //         videos = videos.map(v => v.id === editId ? videoData : v);
+    //     } else {
+    //         videos.push(videoData);
+    //     }
 
-        localStorage.setItem('videos', JSON.stringify(videos));
+    //     localStorage.setItem('videos', JSON.stringify(videos));
 
-        document.getElementById('successMessage').classList.remove('hidden');
-        setTimeout(() => window.location.href = 'manage.html', 1500);
-    });
+    //     document.getElementById('successMessage').classList.remove('hidden');
+    //     setTimeout(() => window.location.href = 'manage.html', 1500);
+    // });
 </script>
 </body>
 </html>
