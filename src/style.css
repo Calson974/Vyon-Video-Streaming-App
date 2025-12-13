@@ -92,6 +92,26 @@ body {
   }
 }
 
+@keyframes uploadPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 46, 99, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(255, 46, 99, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 46, 99, 0);
+  }
+}
+
+.upload-pulse {
+  animation: uploadPulse 2s ease-out infinite;
+}
+
+.upload-pulse:hover {
+  animation: none;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
