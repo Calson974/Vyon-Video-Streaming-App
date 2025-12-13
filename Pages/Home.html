@@ -158,12 +158,8 @@
             <span id="userProfileName" class="text-crisp-white font-medium text-sm hidden sm:block">User</span>
           </div>
           <!-- Auth Buttons (shown when not logged in) -->
-          <button id="signUpBtn" class="px-2 py-1 sm:px-4 sm:py-2 text-electric-mint border border-electric-mint hover:bg-electric-mint hover:text-deep-obsidian rounded-full font-medium transition-colors text-xs sm:text-sm">
-            Sign Up
-          </button>
-          <button id="loginBtn" class="px-2 py-1 sm:px-4 sm:py-2 bg-electric-mint text-deep-obsidian hover:bg-opacity-90 rounded-full font-medium transition-colors text-xs sm:text-sm">
-            Log In
-          </button>
+          <button id="signUpBtn" class="px-2 py-1 sm:px-4 sm:py-2 text-electric-mint border border-electric-mint hover:bg-electric-mint hover:text-deep-obsidian rounded-full font-medium transition-colors text-xs sm:text-sm" onclick="handleSignUpClick()" ontouchend="handleSignUpClick()">Sign Up</button>
+          <button id="loginBtn" class="px-2 py-1 sm:px-4 sm:py-2 bg-electric-mint text-deep-obsidian hover:bg-opacity-90 rounded-full font-medium transition-colors text-xs sm:text-sm" onclick="handleLoginClick()" ontouchend="handleLoginClick()">Log In</button>
         </div>
       </div>
 
@@ -450,19 +446,48 @@
 
   <!-- Floating Upload Button -->
   <div class="fixed bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-    <button id="uploadBtn" class="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-radical-red rounded-full flex items-center justify-center hover:bg-red-600 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 upload-pulse">
+    <button id="uploadBtn" class="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-radical-red rounded-full flex items-center justify-center hover:bg-red-600 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 upload-pulse" onclick="handleUploadClick()" ontouchend="handleUploadClick()">
       <svg class="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-crisp-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
       </svg>
     </button>
   </div>
 
-<script type="module">
-  import { initializeAuthButtons, initializeUploadButton } from '/src/home.js';
-  
-  // Initialize navigation buttons when DOM is loaded
-  document.addEventListener('DOMContentLoaded', function() {
-    initializeAuthButtons();
-    initializeUploadButton();
-  });
-</script>
+  <script>
+    // Fallback upload click handler for mobile compatibility
+    function handleUploadClick() {
+      console.log('Upload button clicked via fallback handler');
+      // Simple redirect without Firebase check for reliability
+      window.location.href = '/Pages/cms/upload.html';
+    }
+    
+    // Fallback auth button handlers
+    function handleSignUpClick() {
+      console.log('Sign up button clicked via fallback handler');
+      window.location.href = '/Pages/auth/auth.html?action=signup';
+    }
+    
+    function handleLoginClick() {
+      console.log('Login button clicked via fallback handler');
+      window.location.href = '/Pages/auth/auth.html?action=login';
+    }
+  </script>
+
+  <script type="module">
+    import { initializeAuthButtons, initializeUploadButton } from '/src/home.js';
+    
+    // Initialize navigation buttons when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Initializing navigation buttons...');
+      initializeAuthButtons();
+      initializeUploadButton();
+      console.log('Navigation buttons initialized');
+    });
+    
+    // Also initialize on window load for reliability
+    window.addEventListener('load', function() {
+      console.log('Re-initializing navigation buttons on load...');
+      initializeAuthButtons();
+      initializeUploadButton();
+    });
+  </script>
