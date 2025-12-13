@@ -471,23 +471,62 @@
       console.log('Login button clicked via fallback handler');
       window.location.href = '/Pages/auth/auth.html?action=login';
     }
-  </script>
-
-  <script type="module">
-    import { initializeAuthButtons, initializeUploadButton } from '/src/home.js';
     
-    // Initialize navigation buttons when DOM is loaded
+    // Inline initialization functions (no module dependencies)
+    function initializeAuthButtonsInline() {
+      const signUpBtn = document.getElementById('signUpBtn');
+      const loginBtn = document.getElementById('loginBtn');
+      
+      if (signUpBtn) {
+        signUpBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = '/Pages/auth/auth.html?action=signup';
+        });
+        signUpBtn.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          window.location.href = '/Pages/auth/auth.html?action=signup';
+        });
+      }
+      
+      if (loginBtn) {
+        loginBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = '/Pages/auth/auth.html?action=login';
+        });
+        loginBtn.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          window.location.href = '/Pages/auth/auth.html?action=login';
+        });
+      }
+    }
+    
+    function initializeUploadButtonInline() {
+      const uploadBtn = document.getElementById('uploadBtn');
+      
+      if (uploadBtn) {
+        uploadBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = '/Pages/cms/upload.html';
+        });
+        uploadBtn.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          window.location.href = '/Pages/cms/upload.html';
+        });
+      }
+    }
+    
+    // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('Initializing navigation buttons...');
-      initializeAuthButtons();
-      initializeUploadButton();
-      console.log('Navigation buttons initialized');
+      console.log('Initializing navigation buttons inline...');
+      initializeAuthButtonsInline();
+      initializeUploadButtonInline();
+      console.log('Navigation buttons initialized inline');
     });
     
     // Also initialize on window load for reliability
     window.addEventListener('load', function() {
-      console.log('Re-initializing navigation buttons on load...');
-      initializeAuthButtons();
-      initializeUploadButton();
+      console.log('Re-initializing navigation buttons inline on load...');
+      initializeAuthButtonsInline();
+      initializeUploadButtonInline();
     });
   </script>
