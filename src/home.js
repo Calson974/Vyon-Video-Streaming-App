@@ -75,8 +75,8 @@ function showUserProfileDropdown() {
   menu.id = 'userProfileDropdown';
   menu.className = 'absolute top-12 right-4 bg-gray-800 border border-gray-700 rounded-lg shadow-lg py-2 w-48 z-50';
   menu.innerHTML = `
-    <a href="#" class="block px-4 py-2 hover:bg-gray-700 text-sm">View Profile</a>
-    <a href="/Pages/cms/manage.html" class="block px-4 py-2 hover:bg-gray-700 text-sm">Manage Videos</a>
+    <a href="/Pages/profile/profile.html" class="block px-4 py-2 hover:bg-gray-700 text-sm">View Profile</a>
+    <a href="/src/manage/manage.html" class="block px-4 py-2 hover:bg-gray-700 text-sm">Manage Videos</a>
     <a href="#" class="block px-4 py-2 hover:bg-gray-700 text-sm">Settings</a>
     <hr class="border-gray-700 my-2">
     <button id="logoutBtn" class="block w-full text-left px-4 py-2 hover:bg-gray-700 text-sm">Sign Out</button>
@@ -442,7 +442,7 @@ export function initializeUploadButton() {
       const user = auth.currentUser;
       if (user) {
         // User is authenticated, redirect to upload page
-                window.location.href = '/Pages/cms/upload.html';
+                window.location.href = '/src/upload/upload.html';
       } else {
         // User is not authenticated, redirect to login
                 window.location.href = '/Pages/auth/auth.html?action=login&redirect=upload';
@@ -456,7 +456,7 @@ export function initializeUploadButton() {
       const user = auth.currentUser;
       if (user) {
         // User is authenticated, redirect to upload page
-                window.location.href = '/Pages/cms/upload.html';
+                window.location.href = '/src/upload/upload.html';
       } else {
         // User is not authenticated, redirect to login
                 window.location.href = '/Pages/auth/auth.html?action=login&redirect=upload';
