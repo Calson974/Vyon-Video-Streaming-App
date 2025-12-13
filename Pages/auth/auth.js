@@ -3,6 +3,7 @@ import { auth, db } from "../../firebase/firebase-config";
 import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import { showModal } from "./modal";
 import { get, ref, set, update } from "firebase/database";
+import { redirectIfAuthenticated } from '../../firebase/auth-guard';
 
 // Handle URL parameters for auto-selecting login/signup tab
 const urlParams = new URLSearchParams(window.location.search);
@@ -18,6 +19,9 @@ if (action === 'signup') {
     document.getElementById('loginTab').click();
   }, 100);
 }
+
+// Utility function to redirect authenticated users away from auth page
+redirectIfAuthenticated();
 
 const getUsers = async () => {
   // const users = localStorage.getItem("users");
