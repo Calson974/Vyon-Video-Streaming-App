@@ -26,7 +26,7 @@ document.getElementById('uploadForm').addEventListener("submit", async (e) => {
     const thumbnailFile = document.getElementById("thumbnailUrl").files[0];
     const videoFile = document.getElementById("videoUrl").files[0];
 
-    if (!title || !description || !catergory || !thumbnailFile || !videoFile) {
+    if (!title || !description || !thumbnailFile || !videoFile) {
         status.textContent = "Please fill in all required fields.";
         return;
     }
