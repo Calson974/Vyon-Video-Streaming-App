@@ -1,17 +1,103 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vyon Video Streaming</title>
-    <meta name="description" content="Watch anything, anywhere, anytime" />
-    <meta name="theme-color" content="#121212" />
-  </head>
-  <body class="m-0" style="background-color: var(--deep-obsidian); color: var(--crisp-white);">
-    <div id="app">
-      <!-- App content will be rendered here by JavaScript -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vyon Video Streaming</title>
+  <meta name="description" content="Watch anything, anywhere, anytime" />
+  <meta name="theme-color" content="#121212" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Neon text glow for navbar brand */
+    .neon-text {
+      text-shadow: 0 0 5px #00f5d4, 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 40px #00f5d4;
+    }
+
+    /* Neon hover glow for thumbnails */
+    .thumbnail-hover:hover {
+      box-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 40px #00f5d4;
+      transform: scale(1.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    /* Neon card hover with animated border */
+    .neon-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+
+    .neon-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, #00f5d4, #7f5af0, #00f5d4, #7f5af0);
+      background-size: 400% 400%;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+      animation: neon-border 10s linear infinite;
+    }
+
+    .neon-card:hover::before {
+      opacity: 1;
+    }
+
+    .neon-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes neon-border {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+  </style>
+</head>
+<body class="bg-bg-main text-text-main min-h-screen font-sans">
+
+  <!-- Navbar -->
+  <nav class="bg-bg-surface border-b border-white/10 px-6 py-4 flex justify-between items-center">
+    <div class="text-xl font-bold text-accent neon-text">Vyon</div>
+    <div class="space-x-4">
+      <button class="text-text-main hover:text-accent transition">Home</button>
+      <button class="text-text-main hover:text-accent transition">Explore</button>
+      <button class="text-text-main hover:text-accent transition">Watchlist</button>
     </div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    
+    <!-- Sample Video Card -->
+    <div class="bg-bg-surface rounded-xl p-4 neon-card hover:ring-2 hover:ring-accent transition">
+      <div class="bg-gray-800 h-40 rounded-lg mb-4 flex items-center justify-center text-text-muted thumbnail-hover">Thumbnail</div>
+      <h2 class="font-semibold text-lg mb-2">Sample Movie Title</h2>
+      <p class="text-text-muted text-sm mb-4">2h 14m • Action • 2024</p>
+      <div class="flex gap-2">
+        <button class="bg-accent text-black px-4 py-2 rounded-lg font-semibold hover:scale-105 transition">Watch Now</button>
+        <button class="border border-accent-alt text-accent-alt px-4 py-2 rounded-lg hover:bg-accent-alt hover:text-white transition">Add to List</button>
+      </div>
+    </div>
+
+    <!-- Another Video Card -->
+    <div class="bg-bg-surface rounded-xl p-4 neon-card hover:ring-2 hover:ring-accent transition">
+      <div class="bg-gray-800 h-40 rounded-lg mb-4 flex items-center justify-center text-text-muted thumbnail-hover">Thumbnail</div>
+      <h2 class="font-semibold text-lg mb-2">Another Movie</h2>
+      <p class="text-text-muted text-sm mb-4">1h 50m • Comedy • 2023</p>
+      <div class="flex gap-2">
+        <button class="bg-accent text-black px-4 py-2 rounded-lg font-semibold hover:scale-105 transition">Watch Now</button>
+        <button class="border border-accent-alt text-accent-alt px-4 py-2 rounded-lg hover:bg-accent-alt hover:text-white transition">Add to List</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
 </html>
+

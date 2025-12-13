@@ -4,18 +4,24 @@ export default {
     "./Pages/**/*.{html,js}",
     "./src/**/*.{html,js,ts,jsx,tsx}",
   ],
-  theme: {
-    extend: {
-      colors: {
-        'deep-obsidian': '#121212',
-        'electric-mint': '#00F5D4',
-        'cyber-violet': '#7F5AF0',
-        'radical-red': '#FF2E63',
-        'cool-grey': '#94A1B2',
-        'crisp-white': '#FFFFFF',
-      },
+ theme: {
+  extend: {
+    colors: {
+      /* Backgrounds */
+      'bg-main': '#0B0E14',
+      'bg-surface': '#151A23',
+
+      /* Brand / Accents */
+      'accent': '#00F5D4',        // neon mint
+      'accent-alt': '#7F5AF0',    // violet
+      'danger': '#FF5470',
+
+      /* Text */
+      'text-main': '#EAEAEA',
+      'text-muted': '#9BA4B5',
     },
   },
+},
   plugins: [
     require('@tailwindcss/forms'),
   ],
