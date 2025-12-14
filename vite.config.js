@@ -13,12 +13,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true,
-    fs: {
-      // Allow serving files from one level up
-      strict: false
-    }
+    open: true
   },
-  base: '/',
-  publicDir: false // Disable public directory for dev server
+  base: '/'
 })
