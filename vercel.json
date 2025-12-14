@@ -1,38 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/upload",
-      "destination": "/src/upload/upload.html"
-    },
-    {
-      "source": "/upload.html", 
-      "destination": "/src/upload/upload.html"
-    },
-    {
-      "source": "/manage",
-      "destination": "/src/manage/manage.html"
-    },
-    {
-      "source": "/manage.html",
-      "destination": "/src/manage/manage.html"
-    },
-    {
-      "source": "/profile",
-      "destination": "/Pages/profile/profile.html"
-    },
-    {
-      "source": "/auth/:path*",
-      "destination": "/Pages/auth/auth.html"
-    },
-    {
-      "source": "/src/:path*",
-      "destination": "/src/:path*"
-    },
-    {
-      "source": "/Pages/:path*",
-      "destination": "/Pages/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/Pages/Home.html"
     }
