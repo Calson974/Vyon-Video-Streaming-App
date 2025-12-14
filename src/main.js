@@ -1,5 +1,5 @@
 import './style.css'
-import homePageContent from '../Pages/Home.html?raw'
+import homePageContent from './home/home.html?raw'
 import { 
   createIcons,
   Menu,
@@ -42,7 +42,7 @@ async function loadHomePage() {
 
 loadHomePage()
 
-import('./home.js').then(module => {
+import('./home/home.js').then(module => {
   module.initializeHomePage();
 }).catch(error => {
   console.error('Error loading home.js:', error);

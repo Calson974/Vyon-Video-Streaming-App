@@ -1,7 +1,7 @@
 // Home page functionality
 
 // Import Firebase auth functions
-import { auth } from '../firebase/firebase-config.js';
+import { auth } from '../../firebase/firebase-config.js';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 // Check authentication state and update UI
@@ -233,13 +233,14 @@ export function initializeAuthButtons() {
   
   if (signUpBtn) {
     signUpBtn.addEventListener('click', () => {
-      window.location.href = '/Pages/auth/auth.html?action=signup';
+      window.location.href = '/src/auth/auth.html?action=signup';
+
     });
   }
   
   if (loginBtn) {
     loginBtn.addEventListener('click', () => {
-      window.location.href = '/Pages/auth/auth.html?action=login';
+      window.location.href = '/src/auth/auth.html?action=login';
     });
   }
 }
