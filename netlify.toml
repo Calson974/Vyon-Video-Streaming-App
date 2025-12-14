@@ -1,0 +1,14 @@
+[[redirects]]
+  from = "/src/*"
+  to = "/src/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/Pages/*"
+  to = "/Pages/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/Pages/Home.html"
+  status = 200
