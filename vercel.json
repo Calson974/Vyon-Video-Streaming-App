@@ -5,7 +5,7 @@
       "destination": "/src/upload/upload.html"
     },
     {
-      "source": "/upload.html",
+      "source": "/upload.html", 
       "destination": "/src/upload/upload.html"
     },
     {
@@ -21,7 +21,7 @@
       "destination": "/Pages/profile/profile.html"
     },
     {
-      "source": "/auth",
+      "source": "/auth/:path*",
       "destination": "/Pages/auth/auth.html"
     },
     {
