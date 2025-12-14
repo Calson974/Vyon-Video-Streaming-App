@@ -8,6 +8,23 @@
 
     <!-- ORIGINAL STYLES -->
     <link rel="stylesheet" href="../../src/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'deep-obsidian': '#121212',
+                        'electric-mint': '#00F5D4',
+                        'cyber-violet': '#7F5AF0',
+                        'radical-red': '#FF2E63',
+                        'cool-grey': '#94A1B2',
+                        'crisp-white': '#FFFFFF',
+                    },
+                },
+            },
+        }
+    </script>
 
     <style>
         @keyframes gradient {
@@ -37,15 +54,15 @@
         }
 
         .gradient-bg {
-            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #1e293b);
+            background: linear-gradient(-45deg, #121212, #1a1a1a, #0f0f0f, #1e1e1e);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
         }
 
         .glass-effect {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(18, 18, 18, 0.8);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            border: 1px solid rgba(0, 245, 212, 0.2);
         }
 
         .fade-in {
@@ -53,17 +70,17 @@
         }
 
         .btn-gradient {
-            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #00F5D4 0%, #7F5AF0 100%);
             transition: all 0.3s ease;
         }
 
         .btn-gradient:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 245, 212, 0.5);
         }
 
         .input-glow:focus {
-            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.2);
         }
 
         .dropdown-arrow.rotate {
@@ -75,11 +92,11 @@
 <body class="gradient-bg min-h-screen text-white">
     <div class="max-w-4xl mx-auto p-6 py-12">
         <div class="mb-8 fade-in">
-            <h1 class="text-5xl font-bold mb-3 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent"
+            <h1 class="text-5xl font-bold mb-3 bg-gradient-to-r from-electric-mint to-cyber-violet bg-clip-text text-transparent"
                 id="pageTitle">
                 Upload Video
             </h1>
-            <p class="text-slate-300 text-lg">
+            <p class="text-cool-grey text-lg">
                 Share your Epic Videos with the World
             </p>
         </div>
@@ -88,48 +105,48 @@
 
             <!-- TITLE -->
             <div class="space-y-2">
-                <label class="block text-sm font-semibold text-slate-200">Title *</label>
+                <label class="block text-sm font-semibold text-crisp-white">Title *</label>
                 <input type="text" id="title" required
-                    class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all text-white placeholder-slate-400"
+                    class="w-full bg-deep-obsidian/50 border border-electric-mint/30 rounded-xl px-5 py-3 focus:outline-none focus:border-electric-mint input-glow transition-all text-crisp-white placeholder-cool-grey"
                     placeholder="Enter an epic title for your video" />
             </div>
 
             <!-- DESCRIPTION -->
             <div class="space-y-2">
-                <label class="block text-sm font-semibold text-slate-200">Description *</label>
+                <label class="block text-sm font-semibold text-crisp-white">Description *</label>
                 <textarea id="description" rows="4" required
-                    class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all resize-none text-white placeholder-slate-400"
+                    class="w-full bg-deep-obsidian/50 border border-electric-mint/30 rounded-xl px-5 py-3 focus:outline-none focus:border-electric-mint input-glow transition-all resize-none text-crisp-white placeholder-cool-grey"
                     placeholder="Describe your video"></textarea>
             </div>
 
             <!-- CATEGORY (FRONTEND ONLY) -->
             <div class="space-y-2">
-                <label class="block text-sm font-semibold text-slate-200">Category *</label>
+                <label class="block text-sm font-semibold text-crisp-white">Category *</label>
                 <div id="categoryDropdown"></div>
             </div>
 
             <!-- THUMBNAIL FILE -->
             <div class="space-y-2">
-                <label class="block text-sm font-semibold text-slate-200">Thumbnail *</label>
+                <label class="block text-sm font-semibold text-crisp-white">Thumbnail *</label>
                 <input type="file" id="thumbnailUrl" accept="image/*" required
-                    class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all text-white" />
+                    class="w-full bg-deep-obsidian/50 border border-electric-mint/30 rounded-xl px-5 py-3 focus:outline-none focus:border-electric-mint input-glow transition-all text-crisp-white" />
             </div>
 
             <!-- VIDEO FILE -->
             <div class="space-y-2">
-                <label class="block text-sm font-semibold text-slate-200">Video File *</label>
+                <label class="block text-sm font-semibold text-crisp-white">Video File *</label>
                 <input type="file" id="videoUrl" accept="video/*" required
-                    class="w-full bg-slate-800 bg-opacity-50 border border-slate-600 rounded-xl px-5 py-3 focus:outline-none focus:border-pink-500 input-glow transition-all text-white" />
+                    class="w-full bg-deep-obsidian/50 border border-electric-mint/30 rounded-xl px-5 py-3 focus:outline-none focus:border-electric-mint input-glow transition-all text-crisp-white" />
             </div>
 
             <!-- ACTIONS -->
             <div class="flex gap-4 pt-6">
-                <button type="submit" class="flex-1 btn-gradient text-white font-bold py-4 rounded-xl shadow-lg">
+                <button type="submit" class="flex-1 btn-gradient text-deep-obsidian font-bold py-4 rounded-xl shadow-lg">
                     Upload Video
                 </button>
 
                 <a href="../manage/manage.html"
-                    class="flex-1 bg-slate-700 bg-opacity-50 hover:bg-opacity-70 text-white font-bold py-4 rounded-xl transition-all text-center border border-slate-600">
+                    class="flex-1 bg-deep-obsidian/50 hover:bg-deep-obsidian/70 text-crisp-white font-bold py-4 rounded-xl transition-all text-center border border-electric-mint/30">
                     Cancel
                 </a>
             </div>
