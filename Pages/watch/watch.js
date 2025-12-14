@@ -1,13 +1,6 @@
 import { auth, db } from "../../firebase/firebase-config";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import {
-  ref,
-  set,
-  get,
-  onValue,
-  push,
-  runTransaction,
-} from "firebase/database";
+import { ref, set, get, onValue, push, runTransaction } from "firebase/database";
 
 // -------------------- STATE --------------------
 let isLoggedIn = false;
@@ -15,7 +8,7 @@ let currentUserId = null;
 let currentUserName = "Anonymous";
 
 const urlParams = new URLSearchParams(window.location.search);
-const videoId = urlParams.get("v") || "demoVideo1";
+const videoId = urlParams.get("v");
 const channelId = "vyonOfficial";
 
 // -------------------- DOM ELEMENTS --------------------
@@ -31,18 +24,16 @@ const commentCountEl = document.getElementById("commentCount");
 const loginLink = document.getElementById("loginLink");
 const loginPrompt = document.getElementById("loginPrompt");
 const recommendedList = document.getElementById("recommendedList");
+const viewsCountEl = document.getElementById("viewsCount"); // New element for views
 
 // -------------------- UI UPDATES --------------------
 const updateInteractionUI = () => {
   const elements = [likeBtn, subscribeBtn, addCommentBtn, commentInput];
 
   elements.forEach((el) => {
-    if (el) {
-      el.disabled = !isLoggedIn;
-    }
+    if (el) el.disabled = !isLoggedIn;
   });
 
-  // Show/hide login prompt
   if (loginPrompt) {
     loginPrompt.classList.toggle("hidden", isLoggedIn);
   }
@@ -54,10 +45,10 @@ onAuthStateChanged(auth, async (user) => {
     isLoggedIn = true;
     currentUserId = user.uid;
     currentUserName = user.displayName || user.email?.split("@")[0] || "User";
+    channelName.textContent = user.displayName || user.email?.split("@")[0] || "User";
     loginLink.textContent = "Logout";
     loginLink.href = "#";
 
-    // Load user-specific like/subscribe state
     await loadUserInteractions();
   } else {
     isLoggedIn = false;
@@ -80,11 +71,21 @@ loginLink.addEventListener("click", async (e) => {
 
 // -------------------- LOAD GLOBAL VIDEO DATA --------------------
 const loadGlobalVideoData = () => {
+  // Increment views
+  incrementViews();
+
   // Listen to global like count
   const likeCountRef = ref(db, `videos/${videoId}/likeCount`);
   onValue(likeCountRef, (snapshot) => {
     const count = snapshot.val() || 0;
     likeCountEl.textContent = count;
+  });
+
+  // Listen to global views
+  const viewsRef = ref(db, `videos/${videoId}/views`);
+  onValue(viewsRef, (snapshot) => {
+    const count = snapshot.val() || 0;
+    if (viewsCountEl) viewsCountEl.textContent = `${formatCount(count)} views`;
   });
 
   const subscriberCountRef = ref(db, `channels/${channelId}/subscriberCount`);
@@ -101,21 +102,22 @@ const loadGlobalVideoData = () => {
   });
 };
 
+// -------------------- INCREMENT VIEWS --------------------
+const incrementViews = () => {
+  const viewsRef = ref(db, `videos/${videoId}/views`);
+  runTransaction(viewsRef, (current) => (current || 0) + 1);
+};
+
 // -------------------- LOAD USER-SPECIFIC INTERACTIONS --------------------
 const loadUserInteractions = async () => {
   if (!currentUserId) return;
 
-  // Check if user has liked this video
   const userLikeRef = ref(db, `videos/${videoId}/likes/${currentUserId}`);
   const likeSnapshot = await get(userLikeRef);
   const hasLiked = likeSnapshot.exists() && likeSnapshot.val() === true;
   updateLikeButton(hasLiked);
 
-  // Check if user has subscribed to the channel
-  const userSubRef = ref(
-    db,
-    `channels/${channelId}/subscribers/${currentUserId}`
-  );
+  const userSubRef = ref(db, `channels/${channelId}/subscribers/${currentUserId}`);
   const subSnapshot = await get(userSubRef);
   const hasSubscribed = subSnapshot.exists() && subSnapshot.val() === true;
   updateSubscribeButton(hasSubscribed);
@@ -136,7 +138,6 @@ const renderComments = (commentsData) => {
     return;
   }
 
-  // Convert object to array and sort by timestamp (newest first)
   const commentsArray = Object.entries(commentsData)
     .map(([id, data]) => ({ id, ...data }))
     .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
@@ -151,12 +152,8 @@ const renderComments = (commentsData) => {
         ${(comment.userName || "A").charAt(0).toUpperCase()}
       </div>
       <div class="flex-1 min-w-0">
-        <p class="font-semibold text-white text-sm">${escapeHtml(
-          comment.userName || "Anonymous"
-        )}</p>
-        <p class="text-[#94A1B2] text-sm mt-1 break-words">${escapeHtml(
-          comment.text
-        )}</p>
+        <p class="font-semibold text-white text-sm">${escapeHtml(comment.userName || "Anonymous")}</p>
+        <p class="text-[#94A1B2] text-sm mt-1 break-words">${escapeHtml(comment.text)}</p>
       </div>
     `;
     commentList.appendChild(div);
@@ -196,25 +193,19 @@ likeBtn.addEventListener("click", async () => {
   const currentlyLiked = likeBtn.dataset.liked === "true";
   const newLikedState = !currentlyLiked;
 
-  // Optimistic UI update
   updateLikeButton(newLikedState);
 
   try {
-    // Update user's like status
     const userLikeRef = ref(db, `videos/${videoId}/likes/${currentUserId}`);
     await set(userLikeRef, newLikedState ? true : null);
 
-    // Update global like count using transaction
     const likeCountRef = ref(db, `videos/${videoId}/likeCount`);
     await runTransaction(likeCountRef, (currentCount) => {
-      if (currentCount === null) {
-        return newLikedState ? 1 : 0;
-      }
+      if (currentCount === null) return newLikedState ? 1 : 0;
       return newLikedState ? currentCount + 1 : Math.max(0, currentCount - 1);
     });
   } catch (error) {
     console.error("Error updating like:", error);
-    // Revert on error
     updateLikeButton(currentlyLiked);
   }
 });
@@ -229,28 +220,19 @@ subscribeBtn.addEventListener("click", async () => {
   const currentlySubscribed = subscribeBtn.dataset.subscribed === "true";
   const newSubscribedState = !currentlySubscribed;
 
-  // Optimistic UI update
   updateSubscribeButton(newSubscribedState);
 
   try {
-    const userSubRef = ref(
-      db,
-      `channels/${channelId}/subscribers/${currentUserId}`
-    );
+    const userSubRef = ref(db, `channels/${channelId}/subscribers/${currentUserId}`);
     await set(userSubRef, newSubscribedState ? true : null);
 
     const subscriberCountRef = ref(db, `channels/${channelId}/subscriberCount`);
     await runTransaction(subscriberCountRef, (currentCount) => {
-      if (currentCount === null) {
-        return newSubscribedState ? 1 : 0;
-      }
-      return newSubscribedState
-        ? currentCount + 1
-        : Math.max(0, currentCount - 1);
+      if (currentCount === null) return newSubscribedState ? 1 : 0;
+      return newSubscribedState ? currentCount + 1 : Math.max(0, currentCount - 1);
     });
   } catch (error) {
     console.error("Error updating subscription:", error);
-    // Revert on error
     updateSubscribeButton(currentlySubscribed);
   }
 });
@@ -281,48 +263,47 @@ addCommentBtn.addEventListener("click", async () => {
 });
 
 // -------------------- RENDER RECOMMENDED VIDEOS --------------------
-const renderRecommendedVideos = () => {
-  const recommendedVideos = [
-    {
-      id: "rec1",
-      title: "Another Live Stream",
-      views: "2.4k watching",
-      thumbnail: "https://i.ytimg.com/vi/aqz-KE-bpKQ/hqdefault.jpg",
-    },
-    {
-      id: "rec2",
-      title: "Nature Camera Feed",
-      views: "9k watching",
-      thumbnail: "https://i.ytimg.com/vi/YE7VzlLtp-4/hqdefault.jpg",
-    },
-    {
-      id: "rec3",
-      title: "Tech Talk Live",
-      views: "1.1k watching",
-      thumbnail: "https://i.ytimg.com/vi/aqz-KE-bpKQ/hqdefault.jpg",
-    },
-  ];
 
-  recommendedList.innerHTML = recommendedVideos
-    .map(
-      (video) => `
-      <a href="/watch.html?v=${
-        video.id
-      }" class="flex gap-3 cursor-pointer hover:bg-[#7F5AF0]/20 p-2 rounded transition-colors">
-        <img src="${video.thumbnail}" alt="${escapeHtml(
-        video.title
-      )}" class="w-40 h-24 rounded object-cover flex-shrink-0" />
+const loadRecommendedVideos = () => {
+  const videosRef = ref(db, "videos");
+  onValue(videosRef, (snapshot) => {
+    const videosData = snapshot.val();
+    if (!videosData) return;
+
+    const videosArray = Object.entries(videosData)
+      .map(([id, data]) => ({ id, ...data }))
+      .filter(v => v.id !== videoId)
+      .slice(0, 5);
+
+    recommendedList.innerHTML = ""; // clear first
+
+    videosArray.forEach(video => {
+      const a = document.createElement("a");
+      a.href = "#"; // prevent default navigation
+      a.className = "flex gap-3 cursor-pointer hover:bg-[#7F5AF0]/20 p-2 rounded transition-colors";
+
+      a.innerHTML = `
+        <img src="${video.thumbnailUrl}" 
+             alt="${video.title}" class="w-40 h-24 rounded object-cover flex-shrink-0" />
         <div class="flex flex-col min-w-0">
-          <p class="font-semibold text-white text-sm line-clamp-2">${escapeHtml(
-            video.title
-          )}</p>
-          <span class="text-[#94A1B2] text-xs mt-1">${video.views}</span>
+          <p class="font-semibold text-white text-sm line-clamp-2">${video.title}</p>
+          <span class="text-[#94A1B2] text-xs mt-1">${formatCount(video.views || 0)} views</span>
         </div>
-      </a>
-    `
-    )
-    .join("");
+      `;
+
+      a.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const videoRef = ref(db, `videos/${video.id}/views`);
+        await runTransaction(videoRef, (current) => (current || 0) + 1);
+        window.location.href = `/Pages/watch/watch.html?v=${video.id}`;
+      });
+
+      recommendedList.appendChild(a);
+    });
+  });
 };
+
+
 
 // -------------------- UTILITY FUNCTIONS --------------------
 const escapeHtml = (text) => {
@@ -332,14 +313,61 @@ const escapeHtml = (text) => {
 };
 
 const formatCount = (count) => {
-  if (count >= 1000000) {
-    return (count / 1000000).toFixed(1) + "M";
-  } else if (count >= 1000) {
-    return (count / 1000).toFixed(1) + "k";
-  }
+  if (count >= 1000000) return (count / 1000000).toFixed(1) + "M";
+  if (count >= 1000) return (count / 1000).toFixed(1) + "k";
   return count.toString();
 };
 
+
+
+
+
+if (!videoId) {
+  alert("No video specified");
+  window.location.href = "/";
+}
+
+const videoPlayer = document.getElementById("videoPlayer");
+const videoTitle = document.getElementById("videoTitle");
+const videoDescription = document.getElementById("videoDescription");
+const channelName = document.getElementById("channelName");
+const viewsCount = document.getElementById("viewCount");
+
+const loadVideoData = async () => {
+  try {
+    const videoRef = ref(db, `videos/${videoId}`);
+    const snapshot = await get(videoRef);
+
+    if (!snapshot.exists()) {
+      // Video doesn't exist
+      alert("Video not found");
+      window.location.href = "/";
+      return;
+    }
+
+    const videoData = snapshot.val();
+
+    // Update HTML elements
+    videoPlayer.src = videoData.videoUrl || "";
+    videoTitle.textContent = videoData.title || "Untitled";
+    videoDescription.textContent = videoData.description || "";
+    channelName.textContent = videoData.channelName || "Unknown";
+    viewsCount.textContent = `${videoData.views || 0} watching`;
+
+    // Increment views safely
+    const viewsRef = ref(db, `videos/${videoId}/views`);
+    await runTransaction(viewsRef, (current) => (current || 0) + 1);
+
+  } catch (error) {
+    console.error("Error loading video:", error);
+  }
+};
+
+// loadVideoData();
+
+
+
 // -------------------- INITIALIZE --------------------
 loadGlobalVideoData();
-renderRecommendedVideos();
+loadRecommendedVideos();
+loadVideoData();

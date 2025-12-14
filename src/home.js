@@ -1,6 +1,132 @@
-
+//@ts-nocheck
 import { auth } from '../firebase/firebase-config.js';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { getDatabase,get, ref, onValue, query, orderByChild, equalTo, update, limitToFirst } from 'firebase/database';
+
+const db = getDatabase();
+
+
+async function loadAllVideos() {
+  const grid = document.getElementById('videosGrid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+
+  const snapshot = await get(ref(db, 'videos'));
+  if (!snapshot.exists()) return;
+
+  const videos = Object.values(snapshot.val());
+
+  videos.forEach(video => {
+    const card = document.createElement('div');
+    card.className = 'group cursor-pointer';
+
+    // format date
+    const createdDate = video.createdAt ? new Date(video.createdAt) : null;
+    const formattedDate = createdDate ? createdDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }) : '';
+
+    card.innerHTML = `
+      <div class="relative aspect-video bg-gray-800 rounded-lg overflow-hidden">
+        <img
+          src="${video.thumbnailUrl}"
+          alt="${video.title}"
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+        />
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200"></div>
+      </div>
+
+      <div class="flex mt-3 space-x-3">
+        <div class="w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center text-sm font-bold">
+          ${video.uploaderName?.charAt(0)?.toUpperCase() || 'U'}
+        </div>
+
+        <div class="flex-1">
+          <h3 class="font-medium line-clamp-2 text-sm leading-tight mb-1">
+            ${video.title}
+          </h3>
+          <p class="text-cool-grey text-sm hover:text-electric-mint">
+            ${video.uploaderName || 'Anonymous'}
+          </p>
+          <div class="flex gap-2 text-sm text-cool-grey leading-tight">
+          <p>${formattedDate}</p> 
+          <p> - ${video.views || 0} views</p>
+          </div>
+        </div> 
+      </div> 
+    `;
+
+    // CLICK → watch page
+    card.addEventListener('click', async () => {
+  // Increment views
+  const videoRef = ref(db, `videos/${video.id}`);
+  const snapshot = await get(videoRef);
+  const currentViews = snapshot.val()?.views || 0;
+
+  await update(videoRef, { views: currentViews + 1 });
+
+  // Redirect to watch page
+  window.location.href = `/Pages/watch/watch.html?v=${video.id}`;
+});
+    grid.appendChild(card);
+  });
+}
+
+export async function loadFeatureVideos() {
+  const featureContainer = document.getElementById('featureVideos');
+  if (!featureContainer) return;
+
+  const videosRef = ref(db, 'videos');
+  const videosQuery = query(videosRef, limitToFirst(5)); // get 5 featured videos
+
+  const snapshot = await get(videosQuery);
+  const videos = snapshot.val();
+
+  featureContainer.innerHTML = '';
+
+  if (videos) {
+    Object.entries(videos).forEach(([id, video]) => {
+      const card = document.createElement('div');
+      card.className = 'group cursor-pointer';
+      card.innerHTML = `
+        <div class="relative aspect-video bg-gray-800 rounded-lg overflow-hidden">
+          <img src="${video.thumbnailUrl}" alt="Video thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200">
+          <span class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1 rounded">${video.duration || '0:00'}</span>
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200"></div>
+        </div>
+        <div class="flex mt-3 space-x-3">
+          <div class="w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center text-sm font-bold">
+          ${video.uploaderName?.charAt(0)?.toUpperCase() || 'U'}
+        </div>
+          <div class="flex-1">
+            <h3 class="font-medium line-clamp-2 text-sm leading-tight mb-1">${video.title}</h3>
+            <p class="text-cool-grey text-sm hover:text-electric-mint cursor-pointer">${video.uploaderName || 'Anonymous'}</p>
+            <p class="text-cool-grey text-xs">${video.views || 0} views</p>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener('click', async () => {
+        const videoRef = ref(db, `videos/${video.id}`);
+        const snapshot = await get(videoRef);
+        const currentViews = snapshot.val()?.views || 0;
+
+        await update(videoRef, { views: currentViews + 1 });
+        window.location.href = `/Pages/watch/watch.html?v=${video.id}`;
+
+      });
+
+      featureContainer.appendChild(card);
+    });
+  }
+}
+
+
+
+
 
 export function checkAuthState() {
   const signUpBtn = document.getElementById('signUpBtn');
@@ -602,10 +728,12 @@ export function initializeHomePage() {
   initializeVideoCards();
   initializeLoadMore();
   initializeMobileMenu();
-  initializeUploadButton(); // Add upload button initialization
+  initializeUploadButton(); 
+  loadFeatureVideos();
+  loadAllVideos(); // Add upload button initialization
 }
 
 // Auto-start
-setTimeout(() => {
+
   initializeHomePage();
-}, 100);
+
