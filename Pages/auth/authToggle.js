@@ -9,9 +9,9 @@ loginTab.addEventListener("click", () => {
   loginForm.classList.remove("hidden");
   loginForm.classList.add("animate-slideInRight");
 
-  loginTab.classList.add("border-b-2", "border-pink-500", "text-white");
-  signupTab.classList.remove("border-pink-500", "text-white");
-  signupTab.classList.add("text-gray-300");
+  loginTab.classList.add("border-b-2", "border-electric-mint", "text-white");
+  signupTab.classList.remove("border-electric-mint", "text-white");
+  signupTab.classList.add("text-cool-grey");
 });
 
 signupTab.addEventListener("click", () => {
@@ -19,7 +19,7 @@ signupTab.addEventListener("click", () => {
   signupForm.classList.remove("hidden");
   signupForm.classList.add("animate-slideInLeft");
 
-  signupTab.classList.add("border-b-2", "border-pink-500", "text-white");
-  loginTab.classList.remove("border-pink-500", "text-white");
-  loginTab.classList.add("text-gray-300");
+  signupTab.classList.add("border-b-2", "border-electric-mint", "text-white");
+  loginTab.classList.remove("border-electric-mint", "text-white");
+  loginTab.classList.add("text-cool-grey");
 });

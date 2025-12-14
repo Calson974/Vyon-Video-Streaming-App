@@ -55,7 +55,7 @@ async function loadUserProfile(uid) {
                 displayName: currentUser.displayName || currentUser.email.split('@')[0],
                 handle: currentUser.email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, ''),
                 bio: 'Welcome to my channel! 🎥',
-                profilePicture: `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.email.split('@')[0])}&size=120&background=dc2626&color=fff`,
+                profilePicture: `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.email.split('@')[0])}&size=120&background=00F5D4&color=121212`,
                 followerCount: 0,
                 videoCount: 0,
                 viewCount: 0,
@@ -98,7 +98,7 @@ function displayUserProfile(profile) {
     document.getElementById('userName').textContent = profile.displayName || 'Unknown User';
     document.getElementById('userHandle').textContent = `@${profile.handle || 'user'}`;
     document.getElementById('userBio').textContent = profile.bio || 'No bio available';
-    document.getElementById('profilePic').src = profile.profilePicture || 'https://ui-avatars.com/api/?name=User&size=120&background=dc2626&color=fff';
+    document.getElementById('profilePic').src = profile.profilePicture || 'https://ui-avatars.com/api/?name=User&size=120&background=00F5D4&color=121212';
     
     // Stats
     document.getElementById('videoCount').textContent = profile.videoCount || 0;
@@ -201,29 +201,29 @@ async function loadUserStreams(uid) {
 // ==================== CREATE VIDEO CARD ====================
 function createVideoCard(video) {
     return `
-        <div class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition group relative">
+        <div class="bg-deep-obsidian/60 backdrop-blur-xl border border-electric-mint/20 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition group relative">
             <div class="relative cursor-pointer" onclick="window.location.href='/watch.html?v=${video.id}'">
                 <img src="${video.thumbnail || 'https://via.placeholder.com/320x180?text=No+Thumbnail'}" 
                      alt="${escapeHtml(video.title)}" 
                      class="w-full h-48 object-cover"
                      onerror="this.src='https://via.placeholder.com/320x180?text=No+Thumbnail'">
-                <span class="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded">
+                <span class="absolute bottom-2 right-2 bg-deep-obsidian/90 text-electric-mint text-xs px-2 py-1 rounded border border-electric-mint/30">
                     ${formatDuration(video.duration || 0)}
                 </span>
             </div>
             <div class="p-3">
-                <h3 class="font-semibold text-gray-800 line-clamp-2 mb-1 cursor-pointer hover:text-red-600" onclick="window.location.href='/watch.html?v=${video.id}'">
+                <h3 class="font-semibold text-crisp-white line-clamp-2 mb-1 cursor-pointer hover:text-electric-mint transition" onclick="window.location.href='/watch.html?v=${video.id}'">
                     ${escapeHtml(video.title || 'Untitled Video')}
                 </h3>
-                <p class="text-sm text-gray-600">${formatNumber(video.views || 0)} views • ${formatTimeAgo(video.uploadedAt)}</p>
+                <p class="text-sm text-cool-grey">${formatNumber(video.views || 0)} views • ${formatTimeAgo(video.uploadedAt)}</p>
                 <div class="flex items-center space-x-2 mt-2">
-                    <button onclick="editVideo('${video.id}')" class="text-xs text-gray-600 hover:text-blue-600 transition">
+                    <button onclick="editVideo('${video.id}')" class="text-xs text-cool-grey hover:text-cyber-violet transition">
                         <i class="fas fa-edit mr-1"></i>Edit
                     </button>
-                    <button onclick="deleteVideo('${video.id}')" class="text-xs text-gray-600 hover:text-red-600 transition">
+                    <button onclick="deleteVideo('${video.id}')" class="text-xs text-cool-grey hover:text-radical-red transition">
                         <i class="fas fa-trash mr-1"></i>Delete
                     </button>
-                    <button onclick="shareVideo('${video.id}')" class="text-xs text-gray-600 hover:text-green-600 transition">
+                    <button onclick="shareVideo('${video.id}')" class="text-xs text-cool-grey hover:text-electric-mint transition">
                         <i class="fas fa-share mr-1"></i>Share
                     </button>
                 </div>
@@ -236,23 +236,23 @@ function createVideoCard(video) {
 function createStreamCard(stream) {
     const isLive = stream.status === 'live';
     return `
-        <div class="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition relative">
+        <div class="bg-deep-obsidian/60 backdrop-blur-xl border border-electric-mint/20 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition relative">
             <div class="relative cursor-pointer" onclick="window.location.href='/stream.html?s=${stream.id}'">
                 <img src="${stream.thumbnail || 'https://via.placeholder.com/320x180?text=Stream'}" 
                      alt="${escapeHtml(stream.title)}" 
                      class="w-full h-48 object-cover"
                      onerror="this.src='https://via.placeholder.com/320x180?text=Stream'">
-                ${isLive ? '<span class="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded animate-pulse">● LIVE</span>' : '<span class="absolute top-2 left-2 bg-gray-600 text-white text-xs font-bold px-2 py-1 rounded">ENDED</span>'}
-                ${isLive ? `<span class="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-2 py-1 rounded">${formatNumber(stream.viewers || 0)} watching</span>` : ''}
+                ${isLive ? '<span class="absolute top-2 left-2 bg-electric-mint text-deep-obsidian text-xs font-bold px-2 py-1 rounded animate-pulse border border-electric-mint/30">● LIVE</span>' : '<span class="absolute top-2 left-2 bg-cool-grey/80 text-crisp-white text-xs font-bold px-2 py-1 rounded">ENDED</span>'}
+                ${isLive ? `<span class="absolute bottom-2 right-2 bg-deep-obsidian/90 text-electric-mint text-xs px-2 py-1 rounded border border-electric-mint/30">${formatNumber(stream.viewers || 0)} watching</span>` : ''}
             </div>
             <div class="p-3">
-                <h3 class="font-semibold text-gray-800 line-clamp-2 mb-1 cursor-pointer hover:text-red-600" onclick="window.location.href='/stream.html?s=${stream.id}'">
+                <h3 class="font-semibold text-crisp-white line-clamp-2 mb-1 cursor-pointer hover:text-electric-mint transition" onclick="window.location.href='/stream.html?s=${stream.id}'">
                     ${escapeHtml(stream.title || 'Untitled Stream')}
                 </h3>
-                <p class="text-sm text-gray-600">${isLive ? 'Streaming now' : `Streamed ${formatTimeAgo(stream.startedAt)}`}</p>
+                <p class="text-sm text-cool-grey">${isLive ? 'Streaming now' : `Streamed ${formatTimeAgo(stream.startedAt)}`}</p>
                 <div class="flex items-center space-x-2 mt-2">
-                    ${isLive ? `<button onclick="endStream('${stream.id}')" class="text-xs text-white bg-red-600 px-2 py-1 rounded hover:bg-red-700 transition"><i class="fas fa-stop mr-1"></i>End Stream</button>` : ''}
-                    <button onclick="deleteStream('${stream.id}')" class="text-xs text-gray-600 hover:text-red-600 transition">
+                    ${isLive ? `<button onclick="endStream('${stream.id}')" class="text-xs text-crisp-white bg-radical-red px-2 py-1 rounded hover:bg-radical-red/90 transition border border-radical-red/30"><i class="fas fa-stop mr-1"></i>End Stream</button>` : ''}
+                    <button onclick="deleteStream('${stream.id}')" class="text-xs text-cool-grey hover:text-radical-red transition">
                         <i class="fas fa-trash mr-1"></i>Delete
                     </button>
                 </div>
@@ -331,8 +331,7 @@ function setupEventListeners() {
     
     // Upload and Go Live buttons
     document.getElementById('uploadBtn').addEventListener('click', () => {
-        showToast('Upload feature coming soon!', 'info');
-        // window.location.href = '/upload.html';
+        window.location.href = '/src/upload/upload.html';
     });
     
     document.getElementById('goLiveBtn')?.addEventListener('click', () => {
@@ -395,7 +394,7 @@ function openEditModal() {
     document.getElementById('editBio').value = userProfile.bio || '';
     document.getElementById('bioCount').textContent = (userProfile.bio || '').length;
     document.getElementById('editPicUrl').value = userProfile.profilePicture || '';
-    document.getElementById('previewPic').src = userProfile.profilePicture || 'https://ui-avatars.com/api/?name=User&size=120&background=dc2626&color=fff';
+    document.getElementById('previewPic').src = userProfile.profilePicture || 'https://ui-avatars.com/api/?name=User&size=120&background=00F5D4&color=121212';
     document.getElementById('editLocation').value = userProfile.location || '';
     document.getElementById('editModal').classList.remove('hidden');
 }
@@ -749,16 +748,16 @@ function showToast(message, type = 'success') {
     
     toastMessage.textContent = message;
     
-    // Set icon based on type
+    // Set icon and colors based on type
     if (type === 'success') {
         toastIcon.className = 'fas fa-check-circle';
-        toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        toast.className = 'fixed bottom-4 right-4 bg-electric-mint text-deep-obsidian px-6 py-3 rounded-lg shadow-lg z-50 border border-electric-mint/30 backdrop-blur-xl';
     } else if (type === 'error') {
         toastIcon.className = 'fas fa-exclamation-circle';
-        toast.className = 'fixed bottom-4 right-4 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        toast.className = 'fixed bottom-4 right-4 bg-radical-red text-crisp-white px-6 py-3 rounded-lg shadow-lg z-50 border border-radical-red/30 backdrop-blur-xl';
     } else if (type === 'info') {
         toastIcon.className = 'fas fa-info-circle';
-        toast.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        toast.className = 'fixed bottom-4 right-4 bg-cyber-violet text-crisp-white px-6 py-3 rounded-lg shadow-lg z-50 border border-cyber-violet/30 backdrop-blur-xl';
     }
     
     toast.classList.remove('hidden');
