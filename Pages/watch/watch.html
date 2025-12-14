@@ -6,7 +6,7 @@
     <title>Vyon</title>
 
     <link rel="stylesheet" href="/src/style.css"/>
-     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   </head>
   <body class="bg-[#121212] text-white min-h-screen">
     <!-- HEADER -->
@@ -47,24 +47,15 @@
       <div class="w-full lg:w-3/4">
         <!-- VIDEO PLAYER -->
         <div class="w-full aspect-video bg-black rounded overflow-hidden">
-          <video id="videoPlayer" controls class="w-full h-full">
-            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <video id="videoPlayer" controls class="w-full h-full"></video>
         </div>
 
         <!-- VIDEO TITLE -->
-        <h1 class="text-xl font-semibold mt-4 text-white" id="videoTitle">
-          Big Buck Bunny (Demo Live Stream)
-        </h1>
+        <h1 class="text-xl font-semibold mt-4 text-white" id="videoTitle"></h1>
 
         <!-- LIVE BADGE + VIEWS -->
         <div class="flex flex-wrap items-center gap-3 mt-2 text-sm text-[#94A1B2]">
-          <span class="px-2 py-1 bg-[#FF2E63] text-white text-xs rounded font-medium">
-            LIVE
-          </span>
-          <span id="viewCount">5 watching</span>
-          
+          <span id="viewsCount"></span>
         </div>
 
         <!-- CHANNEL INFO + ACTION BUTTONS -->
@@ -75,7 +66,7 @@
               V
             </div>
             <div>
-              <p class="font-semibold text-white" id="channelName">Vyon Official</p>
+              <p class="font-semibold text-white" id="channelName"></p>
               <p class="text-sm text-[#94A1B2]" id="subscriberCount">2 subscribers</p>
             </div>
           </div>
@@ -141,8 +132,7 @@
       <!-- RIGHT: RECOMMENDED VIDEOS -->
       <aside class="w-full lg:w-1/4 space-y-4">
         <h3 class="font-semibold text-white mb-2">Recommended</h3>
-        <div id="recommendedList" class="space-y-3">
-        </div>
+        <div id="recommendedList" class="space-y-3"></div>
       </aside>
     </main>
 

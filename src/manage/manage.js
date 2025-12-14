@@ -1,11 +1,13 @@
 // @ts-nocheck
-import { db } from '../../firebase/firebase-config.js';
+import { auth, db } from '../../firebase/firebase-config.js';
 import { ref, onValue, remove } from 'firebase/database';
+import { onAuthStateChanged } from 'firebase/auth';
 import { CustomDropdown } from '../dropdown.js';
 
 /* ---------------- Video Management ---------------- */
 let videos = [];
 let deleteVideoId = null;
+let currentUserId = null;
 
 const filterDropdown = new CustomDropdown('filterDropdownContainer', {
     placeholder:'All Categories',
@@ -21,6 +23,18 @@ const filterDropdown = new CustomDropdown('filterDropdownContainer', {
     onChange: renderVideos
 });
 
+// -------------------- AUTH STATE --------------------
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        // Redirect non-authenticated users
+        window.location.href = "/Pages/auth/auth.html";
+        return;
+    }
+
+    currentUserId = user.uid;
+    loadVideos();
+});
+
 // Load videos from Firebase
 function loadVideos() {
     const videosRef = ref(db, 'videos');
@@ -28,8 +42,14 @@ function loadVideos() {
         const data = snapshot.val();
         console.log('Firebase data:', data); // Debug log
         
-        videos = data ? Object.values(data) : [];
-        console.log('Parsed videos:', videos); // Debug log
+        // Filter videos uploaded by current user
+        videos = data 
+            ? Object.entries(data)
+                  .map(([id, video]) => ({ id, ...video }))
+                  .filter(video => video.uploadedBy === currentUserId)
+            : [];
+
+        console.log('User videos:', videos); // Debug log
         
         document.getElementById('loadingState').classList.add('hidden');
         document.getElementById('videosGrid').classList.remove('hidden');
@@ -46,7 +66,7 @@ function renderVideos() {
     const categoryFilterValue = filterDropdown.getValue();
     
     const filteredVideos = videos.filter(video => {
-        if (!video || !video.title) return false; // Skip invalid videos
+        if (!video || !video.title) return false;
         
         const matchesSearch = (video.title || '').toLowerCase().includes(searchTerm) || 
                             (video.description || '').toLowerCase().includes(searchTerm);
@@ -166,7 +186,6 @@ window.confirmDelete = async function() {
     try {
         const videoRef = ref(db, `videos/${deleteVideoId}`);
         await remove(videoRef);
-        
         window.closeDeleteModal();
         // Videos will auto-update via onValue listener
     } catch (error) {
@@ -186,6 +205,3 @@ document.getElementById('detailsModal').addEventListener('click', (e) => {
 document.getElementById('deleteModal').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) window.closeDeleteModal();
 });
-
-// Initial load
-loadVideos();

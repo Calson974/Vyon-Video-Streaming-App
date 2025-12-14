@@ -3,6 +3,10 @@ import { auth, db } from "../../firebase/firebase-config.js";
 import { ref, push, set, get, update } from "firebase/database";
 import { onAuthStateChanged } from "firebase/auth";
 import { CustomDropdown } from "../dropdown.js";
+import { protectPage } from '../../firebase/auth-guard.js'; 
+
+
+protectPage(); // Ensure only authenticated users can access this page
 
 const CLOUD_NAME = "dqt42pket";
 const UPLOAD_PRESET = "vyon_videos";
