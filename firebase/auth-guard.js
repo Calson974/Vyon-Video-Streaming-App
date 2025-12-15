@@ -6,7 +6,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 export function protectPage() {
     onAuthStateChanged(auth, (user) => {
         if (!user) {
-            window.location.href = '/login.html';
+            window.location.href = '/Pages/auth/auth.html';
         }
     })
 }

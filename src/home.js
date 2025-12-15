@@ -15,7 +15,10 @@ async function loadAllVideos() {
   const snapshot = await get(ref(db, 'videos'));
   if (!snapshot.exists()) return;
 
-  const videos = Object.values(snapshot.val());
+  const videos = Object.values(snapshot.val()); 
+  
+  // Remove loader
+  document.getElementById('loadingState').classList.add('hidden');
 
   videos.forEach(video => {
     const card = document.createElement('div');
@@ -36,6 +39,7 @@ async function loadAllVideos() {
           alt="${video.title}"
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
         />
+        <span class="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1 rounded">${video.duration || '0:00'}</span>
         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200"></div>
       </div>
 
@@ -51,9 +55,12 @@ async function loadAllVideos() {
           <p class="text-cool-grey text-sm hover:text-electric-mint">
             ${video.uploaderName || 'Anonymous'}
           </p>
-          <div class="flex gap-2 text-sm text-cool-grey leading-tight">
-          <p>${formattedDate}</p> 
-          <p> - ${video.views || 0} views</p>
+          <p class="gap-2 text-sm text-cool-grey leading-tight">
+          ${formattedDate}
+          </p> 
+          <p class="gap-2 text-sm text-cool-grey leading-tight">
+           ${video.views || 0} views
+          </p>
           </div>
         </div> 
       </div> 
@@ -89,6 +96,7 @@ export async function loadFeatureVideos() {
 
   if (videos) {
     Object.entries(videos).forEach(([id, video]) => {
+      document.getElementById('VideosloadingState').classList.add('hidden');
       const card = document.createElement('div');
       card.className = 'group cursor-pointer';
       card.innerHTML = `

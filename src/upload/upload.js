@@ -109,6 +109,36 @@ onAuthStateChanged(auth, (user) => {
    if (user) currentUser = user; 
 });
 
+function getVideoDuration(file) {
+    return new Promise((resolve, reject) => {
+        const video = document.createElement("video");
+        video.preload = "metadata";
+
+        video.onloadedmetadata = () => {
+            URL.revokeObjectURL(video.src);
+            resolve(video.duration);
+        };
+
+        video.onerror = () => reject("Failed to load video metadata");
+        video.src = URL.createObjectURL(file);
+    });
+}
+
+function formatDuration(seconds) {
+    seconds = Math.floor(seconds);
+
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+
+    if (h > 0) {
+        return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    }
+
+    return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+
 document.getElementById('uploadForm').addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -147,6 +177,18 @@ document.getElementById('uploadForm').addEventListener("submit", async (e) => {
         let videoUrl = existingVideoData?.videoUrl;
         let thumbnailUrl = existingVideoData?.thumbnailUrl;
 
+        // Getting the video duration
+        let duration = existingVideoData?.duration || "0:00";
+        let durationSeconds = existingVideoData?.durationSeconds || 0;
+
+        // Only calculate duration if a new video is uploaded
+        if (videoFile) {
+            status.textContent = "Reading video duration...";
+            durationSeconds = await getVideoDuration(videoFile);
+            duration = formatDuration(durationSeconds);
+        }
+
+
         // Upload new video if provided
         if (videoFile) {
             status.textContent = "Uploading video file...";
@@ -184,15 +226,18 @@ document.getElementById('uploadForm').addEventListener("submit", async (e) => {
         }
 
         const videoData = {
-            title,
-            description,
-            category,
-            videoUrl,
-            thumbnailUrl,
-            uploadedBy: currentUser.uid,
-            uploaderName: currentUser.displayName || "Anonymous",
-            views: existingVideoData?.views || 0
-        };
+        title,
+        description,
+        category,
+        videoUrl,
+        thumbnailUrl,
+        duration,      
+        durationSeconds,    
+        uploadedBy: currentUser.uid,
+        uploaderName: currentUser.displayName || "Anonymous",
+        views: existingVideoData?.views || 0
+    };
+
 
         if (editMode && editVideoId) {
             // Update existing video
