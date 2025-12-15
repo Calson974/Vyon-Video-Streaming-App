@@ -1,14 +1,8 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/Pages/Home.html" },
-    { "source": "/home", "destination": "/Pages/Home.html" },
-    { "source": "/home_temp", "destination": "/Pages/Home_temp.html" },
-    { "source": "/watch", "destination": "/Pages/watch/watch.html" },
-    { "source": "/auth", "destination": "/Pages/auth/auth.html" },
-    { "source": "/profile", "destination": "/Pages/profile/profile.html" },
-    { "source": "/manage", "destination": "/src/manage/manage.html" },
-    { "source": "/upload", "destination": "/src/upload/upload.html" },
-    
-    { "source": "/:any*", "destination": "/Pages/Home.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
